@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:     ArchLinux安装教程-第二部分
-subtitle:   archlinux-install-guide-2
+subtitle:   archlinux-install-guide-3
 date:       2019-09-22
 author:     ALKALiKong，lexoily
 header-img: img/post-bg-universe.jpg
