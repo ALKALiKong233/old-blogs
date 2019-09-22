@@ -1,0 +1,110 @@
+---
+layout:     post
+title:     ArchLinux安装教程-第一部分
+subtitle:   archlinux-install-guide
+date:       2019-09-22
+author:     ALKALiKong，lexoily
+header-img: img/post-bg-universe.jpg
+catalog: true
+tags:
+    - ArchLinux
+---
+## 环境检测
+首先是网络是否联通我们可以通过```ping -c4 www.baidu.com```来判断是否联通，如果有4行提示那说明你的网络正常。
+
+这一步是检测你的引导方式是什么，输入```ls /sys/firmware/efi/efivars```如果有一堆文件出现说明你是UEFI，如果没有则说明你是传统的BOIS引导的。不用担心不管你是不是UEFI我们都会写到的。
+
+
+## 同步时间和选择镜像源
+首先是同步时间，输入```timedatectl set-ntp true```
+
+我们现在该选择镜像源了，输入 ```nano /etc/pacman.d/mirrorlist```
+进入nano之后按下F6并输入china回车选择你想要的源，我个人喜欢清华源
+清华源：https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch
+用ctrl+k剪切好你选择的服务器地址也就是Server那一行，并用ctrl+u粘贴到第一个上面并添加##China在Server那一行上面，然后ctrl+o保存，ctrl+x退出
+
+
+## 分区
+先```lsblk```输入来判断硬盘（一般可以忽视这一步）
+有提示硬盘信息提示就可以，随后我们输入```cfdisk```，类似的这个分区工具也有很多但是这个对新手很友好的了。我们进入界面后可以根据自己的情况进行分区。由于这个是根据自己情况且描述复杂所以就不过多描述。最后分好区了选择write输入yes回车即可
+
+
+## 格式化分区
+由于每个人和每个人不一样，所以这里我举一个配置的例子作为参考
+```
+mkfs.vfat /dev/sdax
+mkfs.ext4 /dev/sdax
+mkswap /dev/sdax
+```
+随后我们输入```mkswap -f /dev/sdax```和```swapon /dev/sdax开启swap```（如果你没有在3中的步骤设置的话可以不看这一步）
+（注：这里的sdax是你在3的步骤中的那个sda1、sda2等等）
+
+
+## 挂载并设置
+这里我们还是举例子作为参考
+```
+mount /dev/sda1 /mnt
+mkdir /mnt/home
+mount /dev/sdax /mnt/home
+mkdir /mnt/boot（用传统方式引导的不用下面那一条命令）
+mkdir /mnt/boot/efi
+mount /dev/sdax /mnt/boot/efi（用UEFI方式启动的）
+mount /dev/sdax /mnt/boot（传统方式引导的，可略过，非重点步骤）
+```
+
+
+## 安装并下载必要包
+这里很简单先输入```pacman -Syy```更新更新列表缓存然后```pacstrap /mnt base base-devel```并等待安装的完成
+
+
+## 生成fstab分区表
+输入```genfstab -U /mnt >> /mnt/etc/fstab```（输入```cat /mnt/etc/fstab```即可查看前面的分区部分是否都生成了相应的条目）
+
+
+## 进入基本系统
+注意，不要重启电脑切换，因为我们还是一个半成品
+输入```arch-chroot /mnt```发现root@archiso~变为[root /]#即可，这样我们就进入了我们这个做好的半成品系统了
+
+
+## 设置时区
+输入 ```ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime```即可
+或输入```tzselect```然后一路确认也是可以的
+
+
+## 硬件时间
+更加简单粗暴，输入```hwclock –-systohc```即可
+
+
+## 设置区域
+输入```nano /etc/locale.gen```进入界面后按F6输入en_US.UTF-8回车去掉前面的空格和#号，然后重复此步骤并把en_US.UTF-8改为zh_CN.UTF-8去掉前面#后ctrl+O保存ctrl+x退出，输入```locale-gen```即可安装locale
+
+
+## 设置默认locale
+此步骤是为了一会进入系统时不乱码，输入echo LANG=en_US.UTF-8>>/etc/locale.conf
+
+
+## 安装上网的软件
+```pacman -S iw wpa_supplicant dialog```
+
+
+## 设置root用户密码
+输入```passwd```然后输入你的密码（注，密码在这里是不出现的，请确保你的密码输入正确）
+
+
+## 安装intel微码（AMD的cpu用户可以跳过，因为你们的这个是开源的已经集成在了linux内核里面）
+简单粗暴的命令：```pacman -S intel-ucode```
+
+
+## 启动加载器安装和设置
+在linux下普遍使用的是gurb来引导系统的，所以我这里用gurb来做例子
+其他启动加载器可以通过这个链接来选择哦：https://wiki.archlinux.org/index.php/Boot_loaders_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)
+```pacman -S grub efibootmgr```（注，UEFI引导的需要安装efibootmgr，传统引导的则需要安装grub即可.如果gurb包名不对的话应该是gurb os -prober，os-prober主要是用来识别双系统的哦）
+注意，这个是很重要的，不要搞混命令哦
+UEFI引导用户输入：```grub-install -–target=x86_64-efi -–efi-directory=/boot/efi -–bootloader-id=grub```
+"/boot/efi"这一部分可以设置为你设定好的boot挂载点或者说你在最开始建立的EFI目录名称
+传统引导则输入：```grub-install /dev/sda```
+无论那种引导方式都要输入这个命令grub-mkconfig -o /boot/grub/grub.cfg
+最后分别输入：```exit```、```umount /dev/sda1```、```umount /dev/sda2```、```reboot```
+
+详细的gurb配置在下方链接中哦：
+https://wiki.archlinux.org/index.php/GRUB_(%E7%AE%80%E4%BD%93%E4%B8%AD%E6%96%87)
