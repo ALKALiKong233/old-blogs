@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:     ArchLinux安装教程-第二部分
+title:     ArchLinux安装教程-第二部分 （WARNING：ＯＵＴＤＡＴＥＤ)
 subtitle:   archlinux-install-guide-2
 date:       2019-09-22
 author:     ALKALiKong，lexoily
@@ -8,6 +8,7 @@ header-img: img/post-bg-universe.jpg
 catalog: true
 tags:
     - ArchLinux
+    - Outdated
 ---
 Archlinux安装教程第二部分
 这里是第二部分。此部分目的为搭建一个比较完整的(开始有图形界面了哦)系统环境。目前我们大致已经把最困难的部分攻关了，想必你也是。后面的步骤比较繁琐，请不要放弃。

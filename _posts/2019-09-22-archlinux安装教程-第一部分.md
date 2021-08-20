@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:     ArchLinux安装教程-第一部分
+title:     ArchLinux安装教程-第一部分 （WARNING：ＯＵＴＤＡＴＥＤ)
 subtitle:   archlinux-install-guide-1
 date:       2019-09-22
 author:     ALKALiKong，lexoily
@@ -8,6 +8,7 @@ header-img: img/post-bg-universe.jpg
 catalog: true
 tags:
     - ArchLinux
+    - Outdated
 ---
 ## 环境检测
 首先是网络是否联通我们可以通过```ping -c4 www.baidu.com```来判断是否联通，如果有4行提示那说明你的网络正常。

@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:     ArchLinux安装教程-第三部分
+title:     ArchLinux安装教程-第三部分 （WARNING：ＯＵＴＤＡＴＥＤ)
 subtitle:   archlinux-install-guide-3
 date:       2019-09-22
 author:     ALKALiKong，lexoily
@@ -8,6 +8,7 @@ header-img: img/post-bg-universe.jpg
 catalog: true
 tags:
     - ArchLinux
+    - Outdated
 ---
 ## 输入法
 (注：主要针对于fcitx输入法引擎)
